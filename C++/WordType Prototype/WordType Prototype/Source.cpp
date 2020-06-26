@@ -6,23 +6,44 @@
 #include <map>
 
 using namespace std;
-void ucitajDatoteku(vector<string>& bazaRijeci) {
+void loadWords(vector<string>& wordDatabase, bool language) {
 	// ne radi s čćžšđ
-	cout << "Ucitavam rjecnik, molimo pricekajte...\n";
-	ifstream datoteka ("rjecnik.dic");
+	ifstream file("");
 	try {
-		if (datoteka.is_open()) {
-			string str;
-			while (getline(datoteka, str)) {
-				if (str.size() > 0)
-					bazaRijeci.push_back(str);
+		if (language == true) {
+			cout << "Loading Word Database, please wait...\n";
+			ifstream file("dictionary.dic");
+			if (file.is_open()) {
+				string str;
+				while (getline(file, str)) {
+					if (str.size() > 0)
+						wordDatabase.push_back(str);
+				}
+				file.close();
 			}
-			datoteka.close();
+			else {
+				cout << "Cant open file\nPlease check if file dictionary.dic is next to .exe program\n";
+				throw(1);
+			}
 		}
 		else {
-			cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
-			throw(1);
+			cout << "Ucitavam rjecnik, molimo pricekajte...\n";
+			ifstream file("rjecnik.dic");
+			if (file.is_open()) {
+				string str;
+				while (getline(file, str)) {
+					if (str.size() > 0)
+						wordDatabase.push_back(str);
+				}
+				file.close();
+			}
+			else {
+				cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
+				throw(1);
+			}
 		}
+
+		
 	}
 	catch (int broj) {
 		if (broj == 1) {
@@ -32,84 +53,101 @@ void ucitajDatoteku(vector<string>& bazaRijeci) {
 	}
 }
 
-map<char, int> dajMapu(string slova) {
+map<char, int> dajMapu(string letters) {
 	map<char, int> mapica;
-	bool pojavlja = false;
-	for (int i = 0; i < slova.size(); i++) {
-		pojavlja = false;
-		if (slova[i] < 97 && slova[i] < 91 && slova[i]>64) {
-			slova[i] += 32;
+	bool repeats = false;
+	for (int i = 0; i < letters.size(); i++) {
+		repeats = false;
+		if (letters[i] < 97 && letters[i] < 91 && letters[i]>64) {
+			letters[i] += 32;
 		}
 		for (auto itr = mapica.begin(); itr != mapica.end(); ++itr) {
-			if (slova[i] == itr->first) {
-				pojavlja = true;
+			if (letters[i] == itr->first) {
+				repeats = true;
 				itr->second++;
 				break;
 			}
 		}
-		if (pojavlja == false) {
-			mapica.insert(pair<char, int>(slova[i], 1));
+		if (repeats == false) {
+			mapica.insert(pair<char, int>(letters[i], 1));
 		}
 	}
 	return mapica;
 }
 
 template <class T>
-void ispisiVektor(vector<T>& vektor) {
+void printVector(vector<T>& vektor, bool language) {
 	for (int i = 0; i < vektor.size(); i++) {
 		cout << vektor[i] << endl;
 	}
 	if (vektor.size() == 0) {
-		cout << "\nNema rjesenja\n";
+		if (language == true) {
+			cout << "\nNo results\n";
+
+		}
+		else {
+			cout << "\nNema rjesenja\n";
+
+		}
 	}
 }
 
-map<char, int> ucitajSlova(){
+map<char, int> loadLetters(bool language){
 	map<char, int> bazaSlova;
-	string slova;
-	bool pojavlja = false;
-	cout << "Upisite slova koja su ponudena (bez razmaka): ";
-	cin >> slova;
-		for (int i = 0; i < slova.size(); i++) {
-			if (slova[i] < 97 && slova[i] <91 && slova[i]>64) {
-				slova[i] += 32;
+	string letters;
+	bool repeats = false;
+	if (language == true) {
+		cout << "Input available characters (without spaces): ";
+	}
+	else {
+		cout << "Upisite slova koja su ponudena (bez razmaka): ";
+	}
+	cin >> letters;
+		for (int i = 0; i < letters.size(); i++) {
+			if (letters[i] < 97 && letters[i] <91 && letters[i]>64) {
+				letters[i] += 32;
 			}
 			try {
-				if (slova[i] < 97 || slova[i]>122) {
-					char tmp = slova[i];
-					slova.erase(slova.begin() + i);
+				if (letters[i] < 97 || letters[i]>122) {
+					char tmp = letters[i];
+					letters.erase(letters.begin() + i);
 					throw(tmp);
 				}
 			}
-			catch (char znak) {
-				if (znak) {
-					cout << "\nUpisali ste nepodrzani znak, "<< znak <<" je uklonjen iz unosa\n";
+			catch (char character) {
+				if (character) {
+					if (language == true) {
+						cout << "\n" <<character << "is invalid character, it has been removed\n";
+					}
+					else {
+						cout << "\nUpisali ste nepodrzani znak, " << character << " je uklonjen iz unosa\n";
+					}
 					i--;
 				}
 			}
 		}
-	return dajMapu(slova);
+	return dajMapu(letters);
 }
 
-vector<string> smanjiBazu(vector<string>& bazaRijeci, map<char, int> bazaSlova) {
+vector<string> smanjiBazu(vector<string>& wordDatabase, map<char, int> bazaSlova) {
 	vector<string> rjesenja;
 	int i = 0, velicina = 0;
 	for (auto it = bazaSlova.begin(); it != bazaSlova.end(); ++it) {
 		velicina += it->second;
 	}
-	while (bazaRijeci[i].size() <= velicina) {
-		rjesenja.push_back(bazaRijeci[i]);
+	while (wordDatabase[i].size() <= velicina) {
+		rjesenja.push_back(wordDatabase[i]);
 		i++;
 	}
 	return rjesenja;
 }
 
 
-vector<string> filtrirajBazu(vector<string>& bazaRijeci, map<char, int> bazaSlova) {
+vector<string> databaseFilter(vector<string>& wordDatabase, map<char, int> bazaSlova) {
 	vector<string> noviVektor;
-	for (int i = 0; i < bazaRijeci.size(); i++) {
+	for (int i = 0; i < wordDatabase.size(); i++) {
 		bool nijeRjesenje = false;
-		map<char, int> mapa = dajMapu(bazaRijeci[i]);
+		map<char, int> mapa = dajMapu(wordDatabase[i]);
 		for (auto itr = mapa.begin(); itr != mapa.end(); ++itr) {
 			if (bazaSlova.find(itr->first) == bazaSlova.end() || mapa.size()==1) {
 				nijeRjesenje = true;
@@ -132,43 +170,75 @@ vector<string> filtrirajBazu(vector<string>& bazaRijeci, map<char, int> bazaSlov
 			continue;
 		}
 		if (nijeRjesenje == false) {
-			noviVektor.push_back(bazaRijeci[i]);
+			noviVektor.push_back(wordDatabase[i]);
 		}
 	}
 	return noviVektor;
 }
 template <class T>
-void obrisiVektor(vector<T>vektor) {
+void deleteVector(vector<T>vektor) {
 	vektor.erase(vektor.begin(), vektor.end());
 }
 
-void obrisiMapu(map<char, int>mapa) {
+void deleteMap(map<char, int>mapa) {
 	mapa.erase(mapa.begin(), mapa.end());
 }
 
-int main() {
-	cout << "Program trenutno ne podrzava dijakriticke znakove! " << endl;
-	char nastavi = 'y';
-	vector<string> bazaRijeci;
-	ucitajDatoteku(bazaRijeci);
+bool languagePick() {
+	char language;
+	cout << "Pick language\nOdaberite jezik\nEnglish (e)\nHrvatski (h)" << endl;
+	cin >> language;
+	if (language == 'e' || language == 'E') {
+		return true;
+	}
+	else if (language == 'h' || language == 'H') {
+		cout << "Program trenutno ne podrzava dijakriticke znakove! " << endl;
+		return false;
+	}
+	else {
+		system("CLS");
+		cout << "Unknown choice\nNepoznat odabir\n" << endl;
+		languagePick();
+	}
+}
 
-	sort(bazaRijeci.begin(), bazaRijeci.end(), [](string& first, const string& second) {
+bool start(vector<string>&wordDatabase) {
+
+	bool language = languagePick();
+
+	loadWords(wordDatabase, language);
+
+	sort(wordDatabase.begin(), wordDatabase.end(), [](string& first, const string& second) {
 		return first.size() < second.size(); });
+	
+
+	return language;
+}
+
+int main() {
+	vector<string> wordDatabase;
+	bool language = start(wordDatabase);
+	char cont = 'y';
 
 
-	while (nastavi == 'y' || nastavi == 'Y') {
-		map<char, int> bazaSlova = ucitajSlova();
+	while (cont == 'y' || cont == 'Y' || cont =='d' ||cont =='D') {
+		map<char, int> letterDatabase = loadLetters(language);
 
-		vector<string> bazaRjesenja = smanjiBazu(bazaRijeci, bazaSlova);
-		vector<string> rjesenja = filtrirajBazu(bazaRjesenja, bazaSlova);
+		vector<string> resultDatabase = smanjiBazu(wordDatabase, letterDatabase);
+		vector<string> result = databaseFilter(resultDatabase, letterDatabase);
 
-		ispisiVektor(rjesenja);
+		printVector(result, language);
 
-		obrisiVektor(bazaRjesenja);
-		obrisiVektor(rjesenja);
-		obrisiMapu(bazaSlova);
-		cout << "\nNastaviti? (y/n): ";
-		cin >> nastavi;
+		deleteVector(resultDatabase);
+		deleteVector(result);
+		deleteMap(letterDatabase);
+		if (language == true) {
+			cout << "\Continue? (y/n): ";
+		}
+		else {
+			cout << "\nNastaviti? (d/n): ";
+		}
+		cin >> cont;
 	}
 	return 0;
 }
