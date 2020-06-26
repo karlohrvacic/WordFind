@@ -221,7 +221,7 @@ int main() {
 	char cont = 'y';
 
 
-	while (cont == 'y' || cont == 'Y' || cont =='d' ||cont =='D') {
+	while (cont != 'n' && cont != 'N') {
 		map<char, int> letterDatabase = loadLetters(language);
 
 		vector<string> resultDatabase = smanjiBazu(wordDatabase, letterDatabase);
@@ -240,5 +240,12 @@ int main() {
 		}
 		cin >> cont;
 	}
+	if (language == true) {
+		cout << "\Program has finished!\nThanks for testing!\n";
+	}
+	else {
+		cout << "\Program izvrsen!\nHvala na testiranju!\n";
+	}
+	system("pause");
 	return 0;
 }
