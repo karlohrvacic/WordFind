@@ -7,48 +7,38 @@
 using namespace std;
 
 //Loads Words from file
-void loadWords(vector<string>& wordDatabase, bool language) {
-    //čćžšđ
-    ifstream file("");
+void loadWords(vector<string>& wordDatabase, string fileName,bool language) {
     //try to load words
     try {
-        //bad code, doesn't work if file is not opened in same flow as it should be read
         if (language) {
             cout << "Loading Word Database, please wait...\n";
-            ifstream file("dictionary.dic");
-            if (file.is_open()) {
-                string str;
-                while (getline(file, str)) {
-                    if (str.size() > 0)
-                        wordDatabase.push_back(str);
-                }
-                file.close();
-            }
-            else {
-                cout << "Cant open file\nPlease check if file dictionary.dic is next to .exe program\n";
-                throw(1);
-            }
         }
         else {
             cout << "Ucitavam rjecnik, molimo pricekajte...\n";
-            ifstream file("rjecnik.dic");
-            if (file.is_open()) {
-                string str;
-                while (getline(file, str)) {
-                    if (str.size() > 0)
-                        wordDatabase.push_back(str);
-                }
-                file.close();
+        }
+        ifstream file(fileName);
+        if (file.is_open()) {
+            string str;
+            while (getline(file, str)) {
+                if (str.size() > 1)
+                    wordDatabase.push_back(str);
             }
-            else {
-                cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
-                throw(1);
-            }
+            file.close();
+        }
+        else {
+            throw(1);
         }
     }
+      
     //if the file cant be opened
     catch (int broj) {
         if (broj == 1) {
+            if (language) {
+                cout << "Cant open file\nPlease check if file dictionary.dic is next to .exe program\n";
+            }
+            else {
+                cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
+            }
             system("pause");
             exit(1);
         }
@@ -73,7 +63,7 @@ map<char, int> makeMap(string letters) {
                 break;
             }
         }
-        if (repeats == false) {
+        if (!repeats) {
             mapica.insert(pair<char, int>(letters[i], 1));
         }
     }
@@ -82,9 +72,6 @@ map<char, int> makeMap(string letters) {
 //print vector
 template <class T>
 void printVector(vector<T>& vektor, bool language) {
-    for (int i = 0; i < vektor.size(); i++) {
-        cout << vektor[i] << endl;
-    }
     //vector empty
     if (!vektor.size()) {
         if (language) {
@@ -92,6 +79,11 @@ void printVector(vector<T>& vektor, bool language) {
         }
         else {
             cout << "\nNema rjesenja\n";
+        }
+    }
+    else {
+        for (int i = 0; i < vektor.size(); i++) {
+            cout << vektor[i] << endl;
         }
     }
 }
@@ -109,7 +101,7 @@ map<char, int> loadLetters(bool language) {
     cin >> letters;
     for (int i = 0; i < letters.size(); i++) {
         //lowercase
-        if (letters[i] < 97 && letters[i] < 91 && letters[i]>64) {
+        if (letters[i] < 97 && letters[i]>64) {
             letters[i] += 32;
         }
         try {
@@ -157,8 +149,8 @@ vector<string> databaseFilter(vector<string>& wordDatabase, map<char, int> lette
         map<char, int> mapa = makeMap(wordDatabase[i]);	//make map from word in DB
         //for whole map made from word in database
         for (auto itr = mapa.begin(); itr != mapa.end(); ++itr) {
-            //if letter can't be found in input letters or word from DB is 1 char long
-            if (letterDatabase.find(itr->first) == letterDatabase.end() || mapa.size() == 1) {
+            //if letter can't be found in input letters
+            if (letterDatabase.find(itr->first) == letterDatabase.end()) {
                 notResult = true;
                 break;
             }
@@ -183,7 +175,7 @@ vector<string> databaseFilter(vector<string>& wordDatabase, map<char, int> lette
             continue;
         }
         //append word in vector
-        if (notResult == false) {
+        if (!notResult) {
             newVector.push_back(wordDatabase[i]);
         }
     }
@@ -222,9 +214,16 @@ bool languagePick() {
 //pick a language, load database and sort it
 bool start(vector<string>& wordDatabase) {
 
+    string fileName;
     bool language = languagePick();
+    if (language) {
+        fileName = "dictionary.dic";
+    }
+    else {
+        fileName = "rjecnik.dic";
+    }
 
-    loadWords(wordDatabase, language);
+    loadWords(wordDatabase, fileName, language);
     //sort word database ascending
     sort(wordDatabase.begin(), wordDatabase.end(), [](string& first, const string& second) {
         return first.size() < second.size();
