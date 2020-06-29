@@ -5,17 +5,13 @@
 #include <string>
 #include <map>
 using namespace std;
-
 //Loads Words from file
-void loadWords(vector<string>& wordDatabase, string fileName,bool language) {
-    //try to load words
+void loadWords(vector<string>& wordDatabase, bool language) {
+    //check language for dictionary
+    string fileName;
+    language ? fileName = "dictionary.dic" : fileName = "rjecnik.dic";
     try {
-        if (language) {
-            cout << "Loading Word Database, please wait...\n";
-        }
-        else {
-            cout << "Ucitavam rjecnik, molimo pricekajte...\n";
-        }
+        language ? cout << "Loading Word Database, please wait...\n" : cout << "Ucitavam rjecnik, molimo pricekajte...\n";
         ifstream file(fileName);
         if (file.is_open()) {
             string str;
@@ -29,16 +25,10 @@ void loadWords(vector<string>& wordDatabase, string fileName,bool language) {
             throw(1);
         }
     }
-      
     //if the file cant be opened
     catch (int broj) {
         if (broj == 1) {
-            if (language) {
-                cout << "Cant open file\nPlease check if file dictionary.dic is next to .exe program\n";
-            }
-            else {
-                cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
-            }
+            language ? cout << "Cant open file\nPlease check if file dictionary.dic is next to .exe program\n" : cout << "Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n";
             system("pause");
             exit(1);
         }
@@ -74,12 +64,7 @@ template <class T>
 void printVector(vector<T>& vektor, bool language) {
     //vector empty
     if (!vektor.size()) {
-        if (language) {
-            cout << "\nNo results\n";
-        }
-        else {
-            cout << "\nNema rjesenja\n";
-        }
+        language ? cout << "\nNo results\n" : cout << "\nNema rjesenja\n";
     }
     else {
         for (int i = 0; i < vektor.size(); i++) {
@@ -92,12 +77,7 @@ map<char, int> loadLetters(bool language) {
     map<char, int> letterDatabase;
     string letters;
     bool repeats = false;
-    if (language) {
-        cout << "Input available characters (without spaces): ";
-    }
-    else {
-        cout << "Upisite slova koja su ponudena (bez razmaka): ";
-    }
+    language ? cout << "Input available characters (without spaces): " : cout << "Upisite slova koja su ponudena (bez razmaka): ";
     cin >> letters;
     for (int i = 0; i < letters.size(); i++) {
         //lowercase
@@ -114,12 +94,7 @@ map<char, int> loadLetters(bool language) {
         }
         catch (char character) {
             if (character) {
-                if (language) {
-                    cout << "\n" << character << " is invalid character, it has been removed\n";
-                }
-                else {
-                    cout << "\nUpisali ste nepodrzani znak, " << character << " je uklonjen iz unosa\n";
-                }
+                language ? cout << "\n" << character << " is invalid character, it has been removed\n" : cout << "\nUpisali ste nepodrzani znak, " << character << " je uklonjen iz unosa\n";
                 i--;
             }
         }
@@ -213,22 +188,12 @@ bool languagePick() {
 }
 //pick a language, load database and sort it
 bool start(vector<string>& wordDatabase) {
-
-    string fileName;
     bool language = languagePick();
-    if (language) {
-        fileName = "dictionary.dic";
-    }
-    else {
-        fileName = "rjecnik.dic";
-    }
-
-    loadWords(wordDatabase, fileName, language);
+    loadWords(wordDatabase, language);
     //sort word database ascending
     sort(wordDatabase.begin(), wordDatabase.end(), [](string& first, const string& second) {
         return first.size() < second.size();
         });
-
     return language;
 }
 //run the show
@@ -237,10 +202,8 @@ int main() {
     bool language = start(wordDatabase);
     bool cont = true;
     char sig = 'y';
-
     while (cont) {
         map<char, int> letterDatabase = loadLetters(language);
-
         vector<string> resultDatabase = shrinkDatabase(wordDatabase, letterDatabase);
         vector<string> result = databaseFilter(resultDatabase, letterDatabase);
         //print results
@@ -249,24 +212,14 @@ int main() {
         deleteVector(resultDatabase);
         deleteVector(result);
         deleteMap(letterDatabase);
-        if (language) {
-            cout << "\Continue? (y/n): ";
-        }
-        else {
-            cout << "\nNastaviti? (d/n): ";
-        }
+        language ? cout << "\Continue? (y/n): " : cout << "\nNastaviti? (d/n): ";
         cin >> sig;
         //transform char to bool
         if (sig == 'n' || sig == 'N' || sig == '0') {
             cont = false;
         }
     }
-    if (language) {
-        cout << "\Program has finished!\nThanks for testing!\n";
-    }
-    else {
-        cout << "\Program izvrsen!\nHvala na testiranju!\n";
-    }
+    language ? cout << "\Program has finished!\nThanks for testing!\n" : cout << "\Program izvrsen!\nHvala na testiranju!\n";
     system("pause");
     return 0;
 }
