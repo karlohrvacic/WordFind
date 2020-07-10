@@ -74,9 +74,7 @@ void printVector(vector<T>& vektor, bool language) {
 }
 //parses user input
 map<char, int> loadLetters(bool language) {
-    map<char, int> letterDatabase;
     string letters;
-    bool repeats = false;
     language ? cout << "Input available characters (without spaces): " : cout << "Upisite slova koja su ponudena (bez razmaka): ";
     cin >> letters;
     for (int i = 0; i < letters.size(); i++) {
