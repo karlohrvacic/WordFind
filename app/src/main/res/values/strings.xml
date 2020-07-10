@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Word Finder</string>
+    <string name="hr">HR</string>
+    <string name="en">EN</string>
 </resources>
