@@ -123,15 +123,99 @@ public class Main {
         Collections.sort(wordDatabase,Comparator.comparing(String::length));
         return language;
     }
+     
+     static void printVector(ArrayList<String> result, boolean language) {
+    	 System.out.println(Arrays.toString(result.toArray()));
+    	if(result.size()==0) {
+    		if(language) {
+            	System.out.println("\nNo results\n");
+            }	else {
+            	System.out.println("\nNema rjesenja\n");
+            }
+    	}
+    }
+    
+     static ArrayList<String> shrinkDatabase(ArrayList<String> wordDatabase, Map<Character, Integer> letterDatabase){
+         ArrayList<String> resultDatabase = new ArrayList<String>();
+         int i = 0, lenght = 0;
+       //count number of letters in user input
+         for (Map.Entry<Character, Integer> entry : letterDatabase.entrySet()) {
+             lenght += entry.getValue();
+         }
+         //remove words longer than number of letters
+         while (wordDatabase.get(i).length() <= lenght) {
+        	 resultDatabase.add(wordDatabase.get(i++));
+         }
+         return resultDatabase;
+     }
+     
+     static ArrayList<String> databaseFilter(ArrayList<String> resultDatabase,Map<Character, Integer> letterDatabase){
+         ArrayList<String> newVector = new ArrayList<String>();
+         for (int i = 0; i < resultDatabase.size(); i++) {
+             boolean notResult = false;
+             Map<Character, Integer> mapa = makeMap(resultDatabase.get(i));	//make map from word in DB
+             for (Map.Entry<Character, Integer> entry : mapa.entrySet()) {
+            	if(letterDatabase.containsKey(entry.getKey())) {
+            		//for whole map from user input
+            		for (Map.Entry<Character, Integer> userInput : mapa.entrySet()) {
+                        //check if it is same letter
+                        if (entry.getKey()==userInput.getKey()) {
+                            //if word have greater number of same letter
+                            if (entry.getValue() > userInput.getValue()) {
+                                notResult = true;
+                            }
+                        }
+                    }
+            	} else {
+            		notResult = true;
+                    break;
+            	}
+             }
+             //for whole map made from word in database
+        	 if (notResult) {
+                 continue;
+             }
+             //append word in vector
+             if (!notResult) {
+            	 newVector.add(resultDatabase.get(i));
+             }
+         }
+         return newVector;
+     }
 
     public static void main(String[] args){
         ArrayList<String> wordDatabase = new ArrayList<String>();
         boolean language = start(wordDatabase);
         boolean cont = true;
-        char sig = 'y';
         while (cont) {
-        	Map<Character, Integer> letterDatabase = new HashMap<Character, Integer>();        
+        	Map<Character, Integer> letterDatabase = new HashMap<Character, Integer>();
+            ArrayList<String> resultDatabase = new ArrayList<String>();
+            ArrayList<String> result = new ArrayList<String>();
         	letterDatabase = loadLetters(language);
+        	resultDatabase = shrinkDatabase(wordDatabase, letterDatabase);
+        	result = databaseFilter(resultDatabase, letterDatabase);
+        	//print results
+            printVector(result, language);
+            //delete unused elements
+            //deleteVector(resultDatabase);
+            //deleteVector(result);
+            //deleteMap(letterDatabase);
+            if(language) {
+            	System.out.println("\nContinue? (y/n): ");
+            }	else {
+            	System.out.println("\nNastaviti? (d/n): ");
+            }
+            Scanner sc = new Scanner(System.in); 
+            char sig = sc.next().charAt(0); 
+            sc.close();
+            if (sig == 'n' || sig == 'N' || sig == '0') {
+                cont = false;
+            }
+        }
+        if(language) {
+        	System.out.println("\nProgram has finished!\nThanks for testing!\n");
+        }	else {
+        	System.out.println("\nProgram izvrsen!\nHvala na testiranju!\n");
         }
     }
 
