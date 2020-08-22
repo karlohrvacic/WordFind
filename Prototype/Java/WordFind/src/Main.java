@@ -6,7 +6,8 @@ import java.util.*;
 import static java.lang.System.exit;
 import java.util.Comparator;
 import java.util.Collections;
-
+import java.io.File;  // Import the File class
+import java.util.Scanner;
 
 public class Main {
 
@@ -20,12 +21,17 @@ public class Main {
             fileName = "rjecnik.dic";
             System.out.println("Ucitavam rjecnik, molimo pricekajte...\n");
         }
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String sCurrentLine;
-            while ((sCurrentLine = br.readLine()) != null) {
-                wordDatabase.add(sCurrentLine);
+        try {
+            File myObj = new File(fileName);
+            Scanner myReader = new Scanner(myObj);
+            while (myReader.hasNextLine()) {
+            	String data = myReader.nextLine();
+            	//System.out.println(data);
+          		wordDatabase.add(data);
+
             }
-        } catch (FileNotFoundException e) {
+            myReader.close();
+          } catch (FileNotFoundException e) {
             e.printStackTrace();
             if (language) {
                 System.out.println("Cant open file\nPlease check if file dictionary.dic is next to .exe program\n");
@@ -33,8 +39,6 @@ public class Main {
                 System.out.println("Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n");
             }
             exit(1);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
     
@@ -64,7 +68,7 @@ public class Main {
     }
     
     static Map<Character, Integer> loadLetters(boolean language){
-    	String letters;
+    	String letters = new String();
         if(language) {
         	System.out.println("Input available characters (without spaces): ");
         }
@@ -73,8 +77,8 @@ public class Main {
         }
         Scanner input = new Scanner(System.in);
         letters = input.nextLine();
-        StringBuilder letter = new StringBuilder(letters);
         input.close();
+        StringBuilder letter = new StringBuilder(letters);
         for (int i = 0; i < letter.length(); i++) {
             //lowercase
             if (letter.charAt(i) < 97 && letter.charAt(i)>64) {
@@ -196,10 +200,7 @@ public class Main {
         	result = databaseFilter(resultDatabase, letterDatabase);
         	//print results
             printVector(result, language);
-            //delete unused elements
-            //deleteVector(resultDatabase);
-            //deleteVector(result);
-            //deleteMap(letterDatabase);
+
             if(language) {
             	System.out.println("\nContinue? (y/n): ");
             }	else {
