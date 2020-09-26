@@ -11,7 +11,6 @@ import java.util.Scanner;
 
 public class Main {
 
-
     static void loadWords(ArrayList<String> wordDatabase, boolean language){
         String fileName;
         if(language){
