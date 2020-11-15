@@ -16,7 +16,13 @@
         <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
       </path>
     </expand>
-    <select />
+    <select>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="BRANCH:master" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </select>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="87199d26-944b-4f3f-91a5-d7d436225fb6" name="Default Changelist" comment="Changing IDE, start for enhancing app" />
@@ -43,24 +49,27 @@
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Programming\Projects\WordFind\Prototype\Java\WordFind\src\dictionaries" />
       <recent name="D:\Programming\Projects\WordFind\Prototype\Java\WordFind\src" />
     </key>
   </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Main" />
+      <option name="MAIN_CLASS_NAME" value="Main.Main" />
       <module name="WordFind" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration default="true" type="ArquillianJUnit" factoryName="" nameIsGenerated="true">
+    <configuration default="true" type="ArquillianTestNG" factoryName="" nameIsGenerated="true">
       <option name="arquillianRunConfiguration">
         <value>
           <option name="containerStateName" value="" />
         </value>
       </option>
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="CLASS" />
+      <properties />
+      <listeners />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -80,6 +89,7 @@
       <option name="presentableId" value="Default" />
       <updated>1605447150308</updated>
       <workItem from="1605447151578" duration="1789000" />
+      <workItem from="1605475756851" duration="5501000" />
     </task>
     <servers />
   </component>
@@ -91,11 +101,29 @@
       <map>
         <entry key="MAIN">
           <value>
-            <State />
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="false" />
+                </map>
+              </option>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="master" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
           </value>
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="WindowStateProjectService">
     <state x="552" y="156" key="#Options" timestamp="1605448677054">
@@ -110,22 +138,38 @@
       <screen x="0" y="0" width="1755" height="948" />
     </state>
     <state x="637" y="345" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1755.948@0.0.1755.948" timestamp="1605448827007" />
-    <state width="1713" height="252" key="GridCell.Tab.0.bottom" timestamp="1605448978286">
+    <state width="1713" height="311" key="GridCell.Tab.0.bottom" timestamp="1605481345082">
       <screen x="0" y="0" width="1755" height="948" />
     </state>
-    <state width="1713" height="252" key="GridCell.Tab.0.bottom/0.0.1755.948@0.0.1755.948" timestamp="1605448978286" />
-    <state width="1713" height="252" key="GridCell.Tab.0.center" timestamp="1605448978286">
+    <state width="1713" height="311" key="GridCell.Tab.0.bottom/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.0.center" timestamp="1605481345082">
       <screen x="0" y="0" width="1755" height="948" />
     </state>
-    <state width="1713" height="252" key="GridCell.Tab.0.center/0.0.1755.948@0.0.1755.948" timestamp="1605448978286" />
-    <state width="1713" height="252" key="GridCell.Tab.0.left" timestamp="1605448978286">
+    <state width="1713" height="311" key="GridCell.Tab.0.center/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.0.left" timestamp="1605481345082">
       <screen x="0" y="0" width="1755" height="948" />
     </state>
-    <state width="1713" height="252" key="GridCell.Tab.0.left/0.0.1755.948@0.0.1755.948" timestamp="1605448978286" />
-    <state width="1713" height="252" key="GridCell.Tab.0.right" timestamp="1605448978286">
+    <state width="1713" height="311" key="GridCell.Tab.0.left/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.0.right" timestamp="1605481345082">
       <screen x="0" y="0" width="1755" height="948" />
     </state>
-    <state width="1713" height="252" key="GridCell.Tab.0.right/0.0.1755.948@0.0.1755.948" timestamp="1605448978286" />
+    <state width="1713" height="311" key="GridCell.Tab.0.right/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.1.bottom" timestamp="1605481345082">
+      <screen x="0" y="0" width="1755" height="948" />
+    </state>
+    <state width="1713" height="311" key="GridCell.Tab.1.bottom/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.1.center" timestamp="1605481345082">
+      <screen x="0" y="0" width="1755" height="948" />
+    </state>
+    <state width="1713" height="311" key="GridCell.Tab.1.center/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.1.left" timestamp="1605481345082">
+      <screen x="0" y="0" width="1755" height="948" />
+    </state>
+    <state width="1713" height="311" key="GridCell.Tab.1.left/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
+    <state width="1713" height="311" key="GridCell.Tab.1.right" timestamp="1605481345082">
+      <screen x="0" y="0" width="1755" height="948" />
+    </state>
+    <state width="1713" height="311" key="GridCell.Tab.1.right/0.0.1755.948@0.0.1755.948" timestamp="1605481345082" />
     <state x="696" y="389" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2" timestamp="1605447234879">
       <screen x="0" y="0" width="1755" height="948" />
     </state>
