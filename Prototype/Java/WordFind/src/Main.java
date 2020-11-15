@@ -1,25 +1,54 @@
-import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.*;
+
 import static java.lang.System.exit;
-import java.util.Comparator;
-import java.util.Collections;
-import java.io.File;  // Import the File class
-import java.util.Scanner;
 
 public class Main {
 
-    static void loadWords(ArrayList<String> wordDatabase, boolean language){
+    public static void main(String[] args){
+        List<String> wordDatabase = new ArrayList<>();
+        int language = start(wordDatabase);
+        boolean cont = true;
+        while (cont) {
+            Map<Character, Integer> letterDatabase;
+            List<String> resultDatabase;
+            List<String> result;
+            letterDatabase = loadLetters(language);
+            resultDatabase = shrinkDatabase(wordDatabase, letterDatabase);
+            result = databaseFilter(resultDatabase, letterDatabase);
+            //print results
+            printVector(result, language);
+
+            if(language == 0) {
+                System.out.println("\nContinue? (y/n): ");
+            }	else { //TODO language picker
+                System.out.println("\nNastaviti? (d/n): ");
+            }
+            Scanner sc = new Scanner(System.in);
+            char sig = sc.next().charAt(0);
+            sc.close();
+            if (sig == 'n' || sig == 'N' || sig == '0') {
+                cont = false;
+            }
+        }
+        if(language == 0) {
+            System.out.println("\nProgram has finished!\nThanks for testing!\n");
+        }	else {//todo language pick
+            System.out.println("\nProgram izvrsen!\nHvala na testiranju!\n");
+        }
+    }
+
+    static void loadWords(List<String> wordDatabase, int language){
         String fileName;
-        if(language){
+        if(language == 0){
             fileName = "dictionary.dic";
             System.out.println("Loading Word Database, please wait...\n");
-        } else {
+        } else{
             fileName = "rjecnik.dic";
             System.out.println("Ucitavam rjecnik, molimo pricekajte...\n");
         }
+        //TODO add new language menu: if language not 0 or 1 null!!!!
         try {
             File myObj = new File(fileName);
             Scanner myReader = new Scanner(myObj);
@@ -32,7 +61,7 @@ public class Main {
             myReader.close();
           } catch (FileNotFoundException e) {
             e.printStackTrace();
-            if (language) {
+            if (language == 0) { // todo language menu
                 System.out.println("Cant open file\nPlease check if file dictionary.dic is next to .exe program\n");
             } else {
                 System.out.println("Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n");
@@ -42,8 +71,8 @@ public class Main {
     }
     
     static Map<Character, Integer> makeMap(String letters){
-    	Map<Character, Integer> mapica = new HashMap<Character, Integer>();        
-        boolean repeats = false;
+    	Map<Character, Integer> tmpMap = new HashMap<>();
+        boolean repeats;
         StringBuilder letter = new StringBuilder(letters);
         for (int i = 0; i < letter.length(); i++) {
             repeats = false;
@@ -52,7 +81,7 @@ public class Main {
             	letter.append(Character.toLowerCase(letter.charAt(i)));
             	}
             //questionable code, go trough whole map if there is already that letter add a number to it
-            for (Map.Entry<Character,Integer> entry : mapica.entrySet()) {
+            for (Map.Entry<Character,Integer> entry : tmpMap.entrySet()) {
                 if (letter.charAt(i) == entry.getKey()) {
                     repeats = true;
                     entry.setValue(entry.getValue()+1);
@@ -60,18 +89,18 @@ public class Main {
                 }
             }
             if (!repeats) {
-                mapica.put(letter.charAt(i), 1);
+                tmpMap.put(letter.charAt(i), 1);
             }
         }
-        return mapica;
+        return tmpMap;
     }
     
-    static Map<Character, Integer> loadLetters(boolean language){
-    	String letters = new String();
-        if(language) {
+    static Map<Character, Integer> loadLetters(int language){
+    	String letters;
+        if(language == 0) {
         	System.out.println("Input available characters (without spaces): ");
         }
-        else {
+        else { //todo language menu
         	System.out.println("Upisite slova koja su ponudena (bez razmaka): ");
         }
         Scanner input = new Scanner(System.in);
@@ -87,59 +116,63 @@ public class Main {
             if (letter.charAt(i) < 97 || letter.charAt(i)>122) {
                char tmp = letter.charAt(i);
                letter.deleteCharAt(i);
-               if(language) {
-                  System.out.printf("\n",  tmp, " is invalid character, it has been removed\n");
+               if(language == 0) {
+                  System.out.println("\n" +  tmp + " is invalid character, it has been removed\n");
                }
-               else {
-                  System.out.printf("\nUpisali ste nepodrzani znak, ", tmp, " je uklonjen iz unosa\n");
+               else { //TODO language pick
+                  System.out.println("\nUpisali ste nepodrzani znak, " + tmp + " je uklonjen iz unosa\n");
                 }
            }
         }
         return makeMap(letter.toString());
     }
 
-    static boolean languagePick(){
+    static int languagePick(){
         System.out.println("Pick language\nOdaberite jezik\nEnglish (e)\nHrvatski (h)\n");
-        Scanner sc = new Scanner(System.in);
-        char language = sc.next().charAt(0);
-        sc.close();
-        boolean Language = true;
-        if (language == 'e' || language == 'E') {
-            Language = true;
-        }
-        //Croatian
-        else if (language == 'h' || language == 'H') {
-            System.out.println("Program trenutno ne podrzava dijakriticke znakove! \n");
-            Language = false;
-        }
-        //Unknown input
-        else {
-            System.out.println("Unknown choice\nNepoznat odabir\n");
-            languagePick();
-        }
-        return Language;
+        Scanner input = new Scanner(System.in);
+        char languagePicker = input.next().charAt(0);
+        int language = -1;
+        boolean inputingLanguage;
+        do{
+            inputingLanguage = false;
+            if (languagePicker == 'e' || languagePicker == 'E') {
+                language = 0;
+            }
+            //Croatian
+            else if (languagePicker == 'h' || languagePicker == 'H') {
+                System.out.println("Program trenutno ne podrzava dijakriticke znakove! \n");
+                language = 1;
+            }// todo add language menu picker
+            else {
+                System.out.println("Unknown choice\nNepoznat odabir\n");
+                inputingLanguage = true;
+            }
+        }while(inputingLanguage);
+
+        input.close();
+        return language;
     }
 
-     static boolean start(ArrayList<String> wordDatabase){
-        boolean language = languagePick();
+     static int start(List<String> wordDatabase){
+        int language = languagePick();
         loadWords(wordDatabase, language);
-        Collections.sort(wordDatabase,Comparator.comparing(String::length));
+        wordDatabase.sort(Comparator.comparing(String::length));
         return language;
     }
      
-     static void printVector(ArrayList<String> result, boolean language) {
+     static void printVector(List<String> result, int language) {
     	 System.out.println(Arrays.toString(result.toArray()));
     	if(result.size()==0) {
-    		if(language) {
+    		if(language == 0) {
             	System.out.println("\nNo results\n");
-            }	else {
+            }	else { //todo language pick
             	System.out.println("\nNema rjesenja\n");
             }
     	}
     }
     
-     static ArrayList<String> shrinkDatabase(ArrayList<String> wordDatabase, Map<Character, Integer> letterDatabase){
-         ArrayList<String> resultDatabase = new ArrayList<String>();
+     static List<String> shrinkDatabase(List<String> wordDatabase, Map<Character, Integer> letterDatabase){
+         List<String> resultDatabase = new ArrayList<>();
          int i = 0, lenght = 0;
        //count number of letters in user input
          for (Map.Entry<Character, Integer> entry : letterDatabase.entrySet()) {
@@ -152,71 +185,36 @@ public class Main {
          return resultDatabase;
      }
      
-     static ArrayList<String> databaseFilter(ArrayList<String> resultDatabase,Map<Character, Integer> letterDatabase){
-         ArrayList<String> newVector = new ArrayList<String>();
-         for (int i = 0; i < resultDatabase.size(); i++) {
+     static List<String> databaseFilter(List<String> resultDatabase, Map<Character, Integer> letterDatabase){
+         List<String> newList = new ArrayList<>();
+         for (String s : resultDatabase) {
              boolean notResult = false;
-             Map<Character, Integer> mapa = makeMap(resultDatabase.get(i));	//make map from word in DB
+             Map<Character, Integer> mapa = makeMap(s);    //make map from word in DB
              for (Map.Entry<Character, Integer> entry : mapa.entrySet()) {
-            	if(letterDatabase.containsKey(entry.getKey())) {
-            		//for whole map from user input
-            		for (Map.Entry<Character, Integer> userInput : mapa.entrySet()) {
-                        //check if it is same letter
-                        if (entry.getKey()==userInput.getKey()) {
-                            //if word have greater number of same letter
-                            if (entry.getValue() > userInput.getValue()) {
-                                notResult = true;
-                            }
-                        }
-                    }
-            	} else {
-            		notResult = true;
-                    break;
-            	}
+                 if (letterDatabase.containsKey(entry.getKey())) {
+                     //for whole map from user input
+                     for (Map.Entry<Character, Integer> userInput : mapa.entrySet()) {
+                         //check if it is same letter
+                         if (entry.getKey() == userInput.getKey()) {
+                             //if word have greater number of same letter
+                             if (entry.getValue() > userInput.getValue()) {
+                                 notResult = true;
+                             }
+                         }
+                     }
+                 } else {
+                     notResult = true;
+                     break;
+                 }
              }
              //for whole map made from word in database
-        	 if (notResult) {
+             if (notResult) {
                  continue;
              }
              //append word in vector
-             if (!notResult) {
-            	 newVector.add(resultDatabase.get(i));
-             }
+             newList.add(s);
          }
-         return newVector;
+         return newList;
      }
-
-    public static void main(String[] args){
-        ArrayList<String> wordDatabase = new ArrayList<String>();
-        boolean language = start(wordDatabase);
-        boolean cont = true;
-        while (cont) {
-        	Map<Character, Integer> letterDatabase = new HashMap<Character, Integer>();
-            ArrayList<String> resultDatabase = new ArrayList<String>();
-            ArrayList<String> result = new ArrayList<String>();
-        	letterDatabase = loadLetters(language);
-        	resultDatabase = shrinkDatabase(wordDatabase, letterDatabase);
-        	result = databaseFilter(resultDatabase, letterDatabase);
-        	//print results
-            printVector(result, language);
-
-            if(language) {
-            	System.out.println("\nContinue? (y/n): ");
-            }	else {
-            	System.out.println("\nNastaviti? (d/n): ");
-            }
-            Scanner sc = new Scanner(System.in); 
-            char sig = sc.next().charAt(0); 
-            sc.close();
-            if (sig == 'n' || sig == 'N' || sig == '0') {
-                cont = false;
-            }
-        }
-        if(language) {
-        	System.out.println("\nProgram has finished!\nThanks for testing!\n");
-        }	else {
-        	System.out.println("\nProgram izvrsen!\nHvala na testiranju!\n");
-        }
-    }
 
 }
