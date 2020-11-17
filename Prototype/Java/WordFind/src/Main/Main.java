@@ -1,4 +1,4 @@
-package Main;
+package main;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,7 +27,7 @@ public class Main {
 
             if(language == 0) {
                 System.out.print("\nContinue? (y/n): ");
-            } else { //TODO language picker
+            } else {
                 System.out.print("\nNastaviti? (d/n): ");
             }
             char sig = userInput.next().charAt(0);
@@ -37,41 +37,49 @@ public class Main {
         }
         if(language == 0) {
             System.out.println("\nProgram has finished!\nThanks for testing!\n");
-        } else {//todo language pick
+        } else {
             System.out.println("\nProgram izvrsen!\nHvala na testiranju!\n");
         }
         userInput.close();
     }
 
-    static void loadWords(List<String> wordDatabase, int language){
+    static int loadWords(List<String> wordDatabase, int language){
         String fileName;
+
         if(language == 0){
             fileName = "src/dictionaries/dictionary.dic";
             System.out.println("Loading Word Database, please wait...\n");
-        } else{
+        } else if (language == 1){
             fileName = "src/dictionaries/rjecnik.dic";
             System.out.println("Ucitavam rjecnik, molimo pricekajte...\n");
+        } else if (language == 2){
+            language = 0;
+            System.out.println("Please put dictionary file in location src/dictionaries/ and input filename ");
+            System.out.print("Filename: ");
+            String tmpFileName = userInput.nextLine();
+            fileName = new StringBuilder().append("src/dictionaries/").append(tmpFileName).toString();
+
+        } else {
+            System.out.println("Wrong language input!\nContinuing with English!");
+            fileName = "src/dictionaries/dictionary.dic";
         }
-        //TODO add new language menu: if language not 0 or 1 null!!!!
         try {
             File myObj = new File(fileName);
             Scanner myReader = new Scanner(myObj);
             while (myReader.hasNextLine()) {
             	String data = myReader.nextLine();
-            	//System.out.println(data);
           		wordDatabase.add(data);
-
             }
             myReader.close();
           } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            if (language == 0) { // todo language menu
-                System.out.println("Cant open file\nPlease check if file dictionary.dic is next to .exe program\n");
+            if (language == 0) {
+                System.out.println("Cant open file\nPlease check if file " + fileName + " exist");
             } else {
-                System.out.println("Ne mogu otvoriti datoteku\nProvjerite nalazi li se rjecnik.dic datoteka uz .exe datoteku\n");
+                System.out.println("Ne mogu otvoriti datoteku\nProvjerite postoji li " + fileName);
             }
             exit(1);
         }
+        return language;
     }
 
     static Map<Character, Integer> makeMap(String word){
@@ -97,8 +105,8 @@ public class Main {
         if(language == 0) {
         	System.out.print("Input available characters (without spaces): ");
         }
-        else { //todo language menu
-        	System.out.print("Upisite slova koja su ponudena (bez razmaka): ");
+        else {
+        	System.out.print("Upišite slova koja su ponuđena (bez razmaka): ");
         }
         String letter = userInput.nextLine();
         letter = letter.replaceAll("[^a-ž]", "").toLowerCase();
@@ -106,7 +114,8 @@ public class Main {
     }
 
     static int languagePick(){
-        System.out.println("Pick language\nOdaberite jezik\nEnglish (e)\nHrvatski (h)\n");
+        System.out.println("Pick language\nOdaberite jezik\nEnglish (e)\nHrvatski (h)\n" +
+                "Costum language (c)");
         String languagePicker;
         int language = -1;
         boolean inputingLanguage;
@@ -119,11 +128,14 @@ public class Main {
             }
             //Croatian
             else if (languagePicker.equals("h") || languagePicker.equals("H")) {
-                System.out.println("Program trenutno ne podrzava dijakriticke znakove! \n");
                 language = 1;
-            }// todo add language menu picker
+            }
+            //Costum language
+            else if(languagePicker.equals("c") || languagePicker.equals("C")){
+                language = 2;
+            }
             else {
-                System.out.println("Unknown choice\nNepoznat odabir\n");
+                System.out.println("Unknown choice\nNepoznat odabir");
                 inputingLanguage = true;
             }
         }while(inputingLanguage);
@@ -132,8 +144,7 @@ public class Main {
     }
 
      static int start(List<String> wordDatabase){
-        int language = languagePick();
-        loadWords(wordDatabase, language);
+        int language = loadWords(wordDatabase, languagePick());
         wordDatabase.sort(Comparator.comparing(String::length));
         return language;
     }
@@ -150,7 +161,6 @@ public class Main {
                 System.out.println(result);
             }
         }
-         System.out.println(results.size());
     }
 
      static List<String> shrinkDatabase(List<String> wordDatabase, Map<Character, Integer> letterDatabase){
@@ -170,18 +180,18 @@ public class Main {
          return resultDatabase;
      }
 
-     static List<String> databaseFilter(List<String> resultDatabase, Map<Character, Integer> letterDatabase){
+     static List<String> databaseFilter(List<String> wordsDatabase, Map<Character, Integer> letterDatabase){
         //TODO review
-         List<String> newList = new ArrayList<>();
-         for (String s : resultDatabase) {
+         List<String> results = new ArrayList<>();
+         for (String word : wordsDatabase) {
              boolean notResult = false;
-             Map<Character, Integer> mapa = makeMap(s);    //make map from word in DB
+             Map<Character, Integer> mapa = makeMap(word);    //make map from word in DB
              for (Map.Entry<Character, Integer> entry : mapa.entrySet()) {
                  if (letterDatabase.containsKey(entry.getKey())) {
                      //for whole map from user input
                      for (Map.Entry<Character, Integer> userInput : mapa.entrySet()) {
                          //check if it is same letter
-                         if (entry.getKey() == userInput.getKey()) {
+                         if (entry.getKey().equals(userInput.getKey())) {
                              //if word have greater number of same letter
                              if (entry.getValue() > userInput.getValue()) {
                                  notResult = true;
@@ -198,9 +208,8 @@ public class Main {
                  continue;
              }
              //append word in vector
-             newList.add(s);
+             results.add(word);
          }
-         return newList;
+         return results;
      }
-
 }
