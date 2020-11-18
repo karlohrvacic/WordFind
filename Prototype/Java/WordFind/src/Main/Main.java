@@ -7,10 +7,11 @@ import java.util.stream.Collectors;
 
 import static java.lang.System.exit;
 
+
 public class Main {
 
     public static final Scanner userInput = new Scanner(System.in);
-
+    //Ne radi npr kuk ništa ne izbacuje
     public static void main(String[] args){
         List<String> wordDatabase = new ArrayList<>();
         int language = start(wordDatabase);
@@ -31,6 +32,7 @@ public class Main {
                 System.out.print("\nNastaviti? (d/n): ");
             }
             char sig = userInput.next().charAt(0);
+            userInput.nextLine();
             if (sig == 'n' || sig == 'N' || sig == '0') {
                 cont = false;
             }
