@@ -7,11 +7,22 @@ public class UserInput {
     private String userString;
     private Integer userStringLenght;
     private Map<Character, Integer> userInputMap;
+    private Integer language;
+    public UserInput() {
 
-    public UserInput(String userString) {
+    }
+
+    public Integer getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Integer language) {
+        this.language = language;
+    }
+
+    public void setUserString(String userString) {
         this.userString = userString.replaceAll("[^a-ž]", "").toLowerCase();
         userStringLenght = userString.length();
-
     }
 
     public String getUserString() {

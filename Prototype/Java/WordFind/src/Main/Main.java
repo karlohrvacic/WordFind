@@ -2,8 +2,10 @@ package main;
 
 import resources.UserInput;
 
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -15,19 +17,20 @@ public class Main {
     public static final Scanner userInput = new Scanner(System.in);
 
     public static void main(String[] args){
-        List<String> wordDatabase = new ArrayList<>();
-        int language = start(wordDatabase);
+        UserInput userData = new UserInput();
+        List<String> wordDatabase = start(userData);
         boolean cont = true;
         while (cont) {
-            List<String> result = databaseFilter(wordDatabase, loadLetters(language));
+            loadLetters(userData);
+            List<String> result = databaseFilter(wordDatabase, userData);
 
             //print results
-            printResults(result, language);
+            printResults(result, userData.getLanguage());
 
-            if(language == 0) {
-                System.out.print("\nContinue? (y/n): ");
+            if(userData.getLanguage() == 0) {
+                System.out.print("Continue? (y/n): ");
             } else {
-                System.out.print("\nNastaviti? (d/n): ");
+                System.out.print("Nastaviti? (d/n): ");
             }
             char sig = userInput.next().charAt(0);
             userInput.nextLine();
@@ -35,51 +38,84 @@ public class Main {
                 cont = false;
             }
         }
-        if(language == 0) {
-            System.out.println("\nProgram has finished!\nThanks for testing!\n");
+        if(userData.getLanguage() == 0) {
+            System.out.println("Program has finished!");
         } else {
-            System.out.println("\nProgram izvrsen!\nHvala na testiranju!\n");
+            System.out.println("Program Završen!");
         }
         userInput.close();
     }
 
-    static int loadWords(List<String> wordDatabase, int language){
-        String fileName;
 
-        if(language == 0){
-            fileName = "src/dictionaries/dictionary.dic";
-            System.out.println("Loading Word Database, please wait...");
-        } else if (language == 1){
-            fileName = "src/dictionaries/rjecnik.dic";
-            System.out.println("Učitavam rječnik, molimo pričekajte...");
-        } else if (language == 2){
-            language = 0;
-            System.out.println("Please put dictionary file in location src/dictionaries/ and input filename ");
-            System.out.print("Filename: ");
-            String tmpFileName = userInput.nextLine();
-            fileName = "src/dictionaries/" + tmpFileName;
+    static List<String> start(UserInput userData){
+        List<String> wordDatabase = languagePick(userData);
+        wordDatabase.sort(Comparator.comparing(String::length));
+        return wordDatabase;
+    }
 
-        } else {
-            System.out.println("Wrong language input!\nContinuing with English!");
-            fileName = "src/dictionaries/dictionary.dic";
-        }
-        try {
-            File myObj = new File(fileName);
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-            	String data = myReader.nextLine();
-          		wordDatabase.add(data);
-            }
-            myReader.close();
-          } catch (FileNotFoundException e) {
+    static List<String> loadWords(int language, Path filename){
+        List<String> wordDatabase = null;
+
+        try{
+            wordDatabase = Files.readAllLines(filename);
+        } catch (FileNotFoundException e) {
             if (language == 0) {
-                System.out.println("Cant open file\nPlease check if file " + fileName + " exist");
+                System.out.println("Cant open file\nPlease check if file " + filename + " exist");
             } else {
-                System.out.println("Ne mogu otvoriti datoteku\nProvjerite postoji li " + fileName);
+                System.out.println("Ne mogu otvoriti datoteku\nProvjerite postoji li " + filename);
             }
-            exit(1);
+            exit(2);
+        } catch (IOException e) {
+            System.out.println("IOException file is not correct!");
+            exit(3);
         }
-        return language;
+        return wordDatabase;
+    }
+
+    static List<String> languagePick(UserInput userData){
+        Path filename = null;
+        System.out.println("""
+                Pick language:
+                English (e)
+                Odaberite jezik:
+                Hrvatski (h)
+                Custom language (c)""");
+        String languagePicker;
+        int language = -1;
+        boolean inputingLanguage;
+        do{
+            System.out.print("Input: ");
+            languagePicker = userInput.nextLine();
+            inputingLanguage = false;
+            //Custom language
+            switch (languagePicker) {
+                case "e", "E" -> {
+                    language = 0;
+                    filename = Path.of("src/dictionaries/dictionary.dic");
+                                    }
+                case "h", "H" -> {
+                    language = 1;
+                    filename = Path.of("src/dictionaries/rjecnik.dic");
+                                    }
+                case "c", "C" -> {
+                    language = 0;
+                    do{
+                        System.out.println("Please put dictionary file in location src/dictionaries/ and input filename ");
+                        System.out.print("Filename: ");
+                        Path tmpFileName = Paths.get(userInput.nextLine());
+                        filename = Path.of("src/dictionaries/" + tmpFileName);
+                    }while(!Files.exists(filename));
+                                    }
+                default -> {
+                    System.out.println("Unknown choice\nNepoznat odabir");
+                    inputingLanguage = true;
+                }
+            }
+        }while(inputingLanguage);
+
+        userData.setLanguage(language);
+
+        return loadWords(language, filename);
     }
 
     static Map<Character, Integer> makeMap(String word){
@@ -101,65 +137,15 @@ public class Main {
         return tmpMap;
     }
 
-    static UserInput loadLetters(int language){
-        if(language == 0) {
+    static void loadLetters(UserInput userData){
+        if(userData.getLanguage() == 0) {
         	System.out.print("Input available characters: ");
         }
         else {
         	System.out.print("Upišite slova koja su ponuđena: ");
         }
-        UserInput input = new UserInput(userInput.nextLine());
-        input.setUserInputMap(makeMap(input.getUserString()));
-        return input;
-    }
-
-    static int languagePick(){
-        System.out.println("""
-                Pick language:
-                English (e)
-                Odaberite jezik:
-                Hrvatski (h)
-                Custom language (c)""");
-        String languagePicker;
-        int language = -1;
-        boolean inputingLanguage;
-        do{
-            System.out.print("Input: ");
-            languagePicker = userInput.nextLine();
-            inputingLanguage = false;
-            //Custom language
-            switch (languagePicker) {
-                case "e", "E" -> language = 0;
-                case "h", "H" -> language = 1;
-                case "c", "C" -> language = 2;
-                default -> {
-                    System.out.println("Unknown choice\nNepoznat odabir");
-                    inputingLanguage = true;
-                }
-            }
-        }while(inputingLanguage);
-
-        return language;
-    }
-
-     static int start(List<String> wordDatabase){
-        int language = loadWords(wordDatabase, languagePick());
-        wordDatabase.sort(Comparator.comparing(String::length));
-        return language;
-    }
-
-     static void printResults(List<String> results, int language) {
-    	if(results.size() == 0) {
-    		if(language == 0) {
-            	System.out.println("\nNo results\n");
-            }	else {
-            	System.out.println("\nNema rjesenja\n");
-            }
-    	} else{
-            for(String result : results){
-                System.out.println(result);
-            }
-        }
+        userData.setUserString(userInput.nextLine());
+        userData.setUserInputMap(makeMap(userData.getUserString()));
     }
 
      static List<String> databaseFilter(List<String> wordsDatabase, UserInput userString){
@@ -187,4 +173,18 @@ public class Main {
          }
          return results;
      }
+
+    static void printResults(List<String> results, int language) {
+        if(results.size() == 0) {
+            if(language == 0) {
+                System.out.println("No results!");
+            }	else {
+                System.out.println("Nema rješenja!");
+            }
+        } else{
+            for(String result : results){
+                System.out.println(result);
+            }
+        }
+    }
 }
