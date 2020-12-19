@@ -1,0 +1,16 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="WordFind:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WordFind_jar</output-path>
+    <root id="archive" name="WordFind.jar">
+      <element id="module-output" name="WordFind" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx-swt.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.base.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.controls.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.fxml.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.graphics.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.media.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.swing.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../../../../../../JavaFX/lib/javafx.web.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
