@@ -38,6 +38,7 @@
                   <Insets top="15.0" />
                </GridPane.margin>
             </ToggleButton>
+            <Label fx:id="time" text="Label" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="RIGHT" GridPane.rowIndex="4" GridPane.valignment="BOTTOM" />
          </children>
       </GridPane>
    </right>

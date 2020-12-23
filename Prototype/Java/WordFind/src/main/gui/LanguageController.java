@@ -1,15 +1,9 @@
 package main.gui;
 
-import javafx.beans.property.ListProperty;
-import javafx.beans.property.SimpleListProperty;
-import javafx.beans.property.StringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
 import main.resources.UserInput;
 
 import java.io.FileNotFoundException;
@@ -36,6 +30,9 @@ public class LanguageController implements Initializable {
 
     @FXML
     private Label userInformation;
+
+    @FXML
+    private Label time;
 
     @FXML
     private TextField inputedWords;
@@ -124,14 +121,18 @@ public class LanguageController implements Initializable {
     }
 
     public void search(){
+        long start = System.currentTimeMillis();
         userData.setUserString(inputedWords.getText().toLowerCase());
         userData.setUserInputMap(makeMap(userData.getUserString()));
         matches();
+        long finish = System.currentTimeMillis();
+        time.setText(Long.toString(finish - start) + " ms.");
     }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         changeText();
+        time.setText("");
     }
 
     static Map<Character, Integer> makeMap(String word){
